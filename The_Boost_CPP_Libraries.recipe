@@ -1,0 +1,58 @@
+from calibre.web.feeds.recipes import BasicNewsRecipe
+
+from lxml import html
+from pprint import pprint
+from urlparse import urljoin
+
+class The_Boost_CPP_Libraries(BasicNewsRecipe):
+    title = 'The Boost C++ Libraries'
+    # description = ''
+    # cover_url = ''
+
+    # no_stylesheets = True
+    keep_only_tags = [{'class': ['preface', 'sect1', 'part', 'chapter', 'index']}]
+    # remove_tags = [dict(name='div', attrs={'class':'advert'})]
+
+    max_articles_per_feed = 1000
+
+    url_prefix = 'http://theboostcpplibraries.com/'
+
+    def parse_section(self, url):
+        raw = self.index_to_soup(url, raw=True)
+        root = html.fromstring(raw)
+
+        title = root.xpath('//title/text()')[0]
+        articles = [{'title': title, 'url': url}]
+
+        if 'Part' not in title:
+            atags = root.xpath('//div[@class="toc"]//a')
+            for atag in atags:
+                texts = atag.xpath('.//text()')
+                href = atag.xpath('./@href')[0]
+
+                text = ''.join(texts)
+                url = urljoin(self.url_prefix, href)
+
+                article = {'title': text, 'url': url}
+                articles.append(article)
+        return articles
+
+    def parse_index(self):
+        raw = self.index_to_soup(self.url_prefix, raw=True)
+        root = html.fromstring(raw)
+
+        atags = root.xpath('//div[@class="toc"]//a')
+
+        ans = []
+        for atag in atags:
+            texts = atag.xpath('.//text()')
+            href = atag.xpath('./@href')[0]
+
+            text = ''.join(texts)
+            url = urljoin(self.url_prefix, href)
+
+            articles = self.parse_section(url)
+            section = (text, articles)
+            ans.append(section)
+        pprint(ans)
+        return ans

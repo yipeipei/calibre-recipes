@@ -1,0 +1,35 @@
+from calibre.web.feeds.recipes import BasicNewsRecipe
+
+from lxml import html
+from pprint import pprint
+from urlparse import urljoin
+
+class AOSA(BasicNewsRecipe):
+    title = 'The Architecture of Open Source Applications Volume I'
+    # description = ''
+    cover_url = 'http://aosabook.org/images/cover1.jpg'
+
+    no_stylesheets = True
+    # keep_only_tags = [dict(id=['content', 'heading'])]
+    # remove_tags = [dict(name='div', attrs={'class':'advert'})]
+
+    max_articles_per_feed = 1000
+
+    url_prefix = 'http://aosabook.org/en/'
+
+    def parse_index(self):
+        raw = self.index_to_soup(self.url_prefix + 'index.html', raw=True)
+        root = html.fromstring(raw)
+
+        table = root.xpath('//table')[3]
+        atags = table.xpath('.//tr/td[2]/a')
+
+        articles = []
+        for atag in atags:
+            text = atag.xpath('./text()')[0]
+            href = atag.xpath('./@href')[0]
+            url = urljoin(self.url_prefix, href)
+            articles.append({'title': text, 'url': url})
+        ans = [('The Architecture of Open Source Applications Volume I', articles)]
+        pprint(ans)
+        return ans

@@ -4,10 +4,10 @@ from lxml import html
 from pprint import pprint
 from urlparse import urljoin
 
-class AOSA_Vol_I(BasicNewsRecipe):
-    title = 'The Architecture of Open Source Applications Volume I'
+class _500L(BasicNewsRecipe):
+    title = '500 Lines or Less'
     # description = ''
-    cover_url = 'http://aosabook.org/images/cover1.jpg'
+    cover_url = 'http://aosabook.org/images/500l-cover.png'
 
     no_stylesheets = True
     # keep_only_tags = [dict(id=['content', 'heading'])]
@@ -21,7 +21,7 @@ class AOSA_Vol_I(BasicNewsRecipe):
         raw = self.index_to_soup(self.url_prefix + 'index.html', raw=True)
         root = html.fromstring(raw)
 
-        table = root.xpath('//table')[3]
+        table = root.xpath('//table')[0]
         atags = table.xpath('.//tr/td[2]/a')
 
         articles = []
@@ -30,6 +30,6 @@ class AOSA_Vol_I(BasicNewsRecipe):
             href = atag.xpath('./@href')[0]
             url = urljoin(self.url_prefix, href)
             articles.append({'title': text, 'url': url})
-        ans = [('The Architecture of Open Source Applications Volume I', articles)]
+        ans = [('500 Lines or Less', articles)]
         pprint(ans)
         return ans

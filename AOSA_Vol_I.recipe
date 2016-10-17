@@ -4,7 +4,7 @@ from lxml import html
 from pprint import pprint
 from urlparse import urljoin
 
-class AOSA(BasicNewsRecipe):
+class AOSA_Vol_I(BasicNewsRecipe):
     title = 'The Architecture of Open Source Applications Volume I'
     # description = ''
     cover_url = 'http://aosabook.org/images/cover1.jpg'

@@ -26,8 +26,9 @@ class AOSA_Vol_II(BasicNewsRecipe):
 
         articles = []
         for atag in atags:
-            text = atag.xpath('./text()')[0]
+            texts = atag.xpath('./text()')
             href = atag.xpath('./@href')[0]
+            text = ''.join(texts)
             url = urljoin(self.url_prefix, href)
             articles.append({'title': text, 'url': url})
         ans = [('The Architecture of Open Source Applications Volume II', articles)]
